@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -16,26 +17,61 @@
     <name>${project.artifactId}</name>
     <description>Spring Boot Security - JWT Authentication</description>
 
+    <!-- properties -->
     <properties>
+        <!-- revision -->
+        <revision>0.0.0</revision>
+
+        <!-- sourceEncoding & outputEncoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- java version -->
         <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    <appsuite-framework-core.version>0.0.23</appsuite-framework-core.version>
-        <appsuite-framework-spring.version>0.0.32</appsuite-framework-spring.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <!-- maven plugins -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+        <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
+
+        <!-- checkstyle -->
+        <code-styles.dir>https://raw.githubusercontent.com/rslakra/code-styles/master</code-styles.dir>
+        <checkstyle.threshold>0</checkstyle.threshold>
+
+        <!-- appsuite-core -->
+        <appsuite-core.version>0.0.4</appsuite-core.version>
+
+        <!-- appsuite-spring -->
+        <appsuite-spring.version>0.0.4</appsuite-spring.version>
+
+        <!-- lombok -->
+        <lombok.version>1.18.28</lombok.version>
+
+        <!-- swagger -->
+        <swagger.skip>false</swagger.skip>
+
+        <!-- junit-jupiter-params -->
+        <junit-jupiter-params.version>5.9.2</junit-jupiter-params.version>
+
     </properties>
 
+    <!-- dependencies -->
     <dependencies>
-        <!-- appsuite-framework-modules -->
+
+        <!-- appsuite-core -->
         <dependency>
-            <groupId>com.devamatre.framework</groupId>
-            <artifactId>appsuite-framework-core</artifactId>
-            <version>${appsuite-framework-core.version}</version>
+            <groupId>com.devamatre.appsuite</groupId>
+            <artifactId>appsuite-core</artifactId>
+            <version>${appsuite-core.version}</version>
         </dependency>
 
+        <!-- appsuite-spring -->
         <dependency>
-            <groupId>com.devamatre.framework</groupId>
-            <artifactId>appsuite-framework-spring</artifactId>
-            <version>${appsuite-framework-spring.version}</version>
+            <groupId>com.devamatre.appsuite</groupId>
+            <artifactId>appsuite-spring</artifactId>
+            <version>${appsuite-spring.version}</version>
         </dependency>
 
         <dependency>
