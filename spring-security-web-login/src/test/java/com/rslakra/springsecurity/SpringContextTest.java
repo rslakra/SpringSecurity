@@ -7,7 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration({"/RedirectionWebSecurityConfig.xml"})
+@ContextConfiguration({"/redirection-web-security-config.xml"})
 @WebAppConfiguration
 public class SpringContextTest {
 
