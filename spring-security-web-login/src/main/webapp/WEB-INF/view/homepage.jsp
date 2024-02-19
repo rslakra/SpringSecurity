@@ -7,7 +7,7 @@
     <h1>This is the body of the sample view</h1>
 
     <security:authorize access="hasRole('ROLE_USER')">
-        This text is only visible to a userDetail
+        This text is only visible to a user
         <br/> <br/>
         <a href="<c:url value="/admin/adminpage.html" />">Restricted Admin Page</a>
         <br/> <br/>
