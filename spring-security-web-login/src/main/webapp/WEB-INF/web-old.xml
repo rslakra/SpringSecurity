@@ -15,7 +15,7 @@
     </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.baeldung.spring</param-value>
+        <param-value>com.rslakra.springsecurity</param-value>
     </context-param>
 
     <listener>
@@ -51,7 +51,5 @@
     <!-- <welcome-file-list> -->
     <!-- <welcome-file>index.html</welcome-file> -->
     <!-- </welcome-file-list> -->
-    
-   
 
 </web-app>

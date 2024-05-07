@@ -1,10 +1,8 @@
-## Spring Boot Security MVC
+# Enable Method Security
 
 This module contains articles about Spring Security with Spring MVC in Boot applications
 
-### The Course
-The "REST With Spring" Classes: http://github.learnspringsecurity.com
+# References
 
-### Relevant Articles:
-
+- [REST With Spring](http://github.learnspringsecurity.com)
 - [Spring @EnableMethodSecurity Annotation](https://www.baeldung.com/spring-enablemethodsecurity)

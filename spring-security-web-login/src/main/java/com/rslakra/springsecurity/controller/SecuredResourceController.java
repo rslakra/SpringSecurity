@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class SecuredResourceController {
 
+    /**
+     *
+     * @param request
+     * @param response
+     */
     @RequestMapping("/secured")
     public void secureResource(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("accessing secured resource");

@@ -1,5 +1,7 @@
 package com.rslakra.springsecurity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -10,23 +12,36 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
+/**
+ * WebApp Initializer
+ *
+ * @author Rohtash Lakra
+ * @version 1.0.0
+ * @since 11/11/2023 6:02 PM
+ * *
+ */
 public class AppInitializer implements WebApplicationInitializer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppInitializer.class);
+
+    /**
+     * @param servletContext
+     */
     @Override
-    public void onStartup(final ServletContext sc) {
-
+    public void onStartup(ServletContext servletContext) {
+        LOGGER.debug("+onStartup({})", servletContext);
         AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
+        root.scan(getClass().getPackageName());
+        servletContext.addListener(new ContextLoaderListener(root));
 
-        root.scan("com.baeldung");
-        sc.addListener(new ContextLoaderListener(root));
-
-        ServletRegistration.Dynamic appServlet = sc.addServlet("mvc", new DispatcherServlet(new GenericWebApplicationContext()));
+        // add dispatcher-servlet
+        ServletRegistration.Dynamic appServlet = servletContext.addServlet("mvc", new DispatcherServlet(new GenericWebApplicationContext()));
         appServlet.setLoadOnStartup(1);
         appServlet.addMapping("/");
 
-        sc.addFilter("securityFilter", new DelegatingFilterProxy("springSecurityFilterChain"))
-        .addMappingForUrlPatterns(null, false, "/*");
-
+        servletContext.addFilter("securityFilter", new DelegatingFilterProxy("springSecurityFilterChain"))
+                .addMappingForUrlPatterns(null, false, "/*");
+        LOGGER.debug("-onStartup()");
     }
 
 }
