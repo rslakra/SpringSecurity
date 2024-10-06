@@ -24,10 +24,12 @@ For more detail, please visit:
 ```
 – or MySQL:
 ```xml
+<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
 <dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <scope>runtime</scope>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.2.0</version>
+    <scope>runtime</scope>
 </dependency>
 ```
 ## Configure Spring Datasource, JPA, App properties
