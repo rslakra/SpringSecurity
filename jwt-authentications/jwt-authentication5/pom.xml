@@ -18,7 +18,7 @@
     <description>Spring Boot Security - JWT Authentication</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>23</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
