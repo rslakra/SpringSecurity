@@ -11,7 +11,7 @@ For more detail, please visit:
 <dependency>
     <groupId>com.mysql</groupId>
     <artifactId>mysql-connector-j</artifactId>
-    <version>8.2.0</version>
+    <version>9.2.0</version>
     <scope>runtime</scope>
 </dependency>
 ```
