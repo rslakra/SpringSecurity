@@ -47,4 +47,4 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 
 
 ## Author
-- Rohtash Singh Lakra
+- Rohtash Lakra

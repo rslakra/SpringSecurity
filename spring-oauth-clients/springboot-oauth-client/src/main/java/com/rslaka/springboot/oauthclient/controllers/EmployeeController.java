@@ -59,9 +59,9 @@ public class EmployeeController {
 
         if (Objects.isNull(code)) {
             employees = new ArrayList<>();
-            employees.add(new Employee(UUID.randomUUID().toString(), "Rohtash Lakra"));
-            employees.add(new Employee(UUID.randomUUID().toString(), "Rohtash Singh"));
-            employees.add(new Employee(UUID.randomUUID().toString(), "Rohtash Singh Lakra"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Lakra"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Singh"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "RS Lakra"));
         } else {
             LOGGER.debug("Authorization Code: {}", code);
             RestTemplate restTemplate = new RestTemplate();
