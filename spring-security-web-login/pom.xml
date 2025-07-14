@@ -26,7 +26,7 @@
         <!-- Maven plugins -->
         <cargo-maven3-plugin.version>1.9.9</cargo-maven3-plugin.version>
         <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
     </properties>
 
     <dependencies>
