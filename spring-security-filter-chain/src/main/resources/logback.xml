@@ -31,6 +31,8 @@
     <!-- springframework -->
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.springframework.boot" level="WARN"/>
+    <!-- Allow startup message with port to be displayed -->
+    <logger name="org.springframework.boot.web.embedded.tomcat" level="INFO"/>
     <logger name="org.springframework.transaction" level="WARN"/>
     <!-- to debug some marshaling issues, this should be TRACE -->
     <logger name="org.springframework.web.servlet.mvc" level="WARN"/>

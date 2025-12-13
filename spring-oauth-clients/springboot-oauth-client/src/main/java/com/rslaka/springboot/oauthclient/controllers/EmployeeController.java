@@ -35,20 +35,51 @@ public class EmployeeController {
     @Value("${authServiceBaseUrl}")
     private String authServiceBaseUrl;
 
+    @Value("${clientBaseUrl}")
+    private String clientBaseUrl;
+
+    @Value("${oauth.clientId}")
+    private String oauthClientId;
+
+    @Value("${oauth.redirectUri}")
+    private String oauthRedirectUri;
+
+    @Value("${oauth.scope}")
+    private String oauthScope;
+
     /**
-     * @return
+     * Home page - API Explorer.
+     *
+     * @return ModelAndView for index page
+     */
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView home() {
+        LOGGER.debug("home()");
+        ModelAndView model = new ModelAndView("index");
+        addOAuthConfig(model);
+        return model;
+    }
+
+    /**
+     * Get employees form page.
+     *
+     * @return ModelAndView for getEmployees page
      */
     @RequestMapping(value = "/getEmployees", method = RequestMethod.GET)
     public ModelAndView getEmployeeInfo() {
         LOGGER.debug("getEmployeeInfo()");
-        return new ModelAndView("getEmployees");
+        ModelAndView model = new ModelAndView("getEmployees");
+        addOAuthConfig(model);
+        return model;
     }
 
     /**
-     * @param code
-     * @return
-     * @throws JsonProcessingException
-     * @throws IOException
+     * Show employees page.
+     *
+     * @param code OAuth authorization code (optional)
+     * @return ModelAndView for showEmployees page
+     * @throws JsonProcessingException if JSON parsing fails
+     * @throws IOException if network error occurs
      */
     @RequestMapping(value = "/showEmployees", method = RequestMethod.GET)
     public ModelAndView showEmployees(@RequestParam(value = "code", required = false) String code)
@@ -59,13 +90,13 @@ public class EmployeeController {
 
         if (Objects.isNull(code)) {
             employees = new ArrayList<>();
-            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Lakra"));
-            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Singh"));
-            employees.add(new Employee(UUID.randomUUID().toString(), "RS Lakra"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Lak"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "Roh Sin"));
+            employees.add(new Employee(UUID.randomUUID().toString(), "RS Lak"));
         } else {
             LOGGER.debug("Authorization Code: {}", code);
             RestTemplate restTemplate = new RestTemplate();
-            String credentials = "oauth:secret";
+            String credentials = oauthClientId + ":secret";
             String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -75,7 +106,7 @@ public class EmployeeController {
             StringBuilder urlBuilder = new StringBuilder(authServiceBaseUrl);
             urlBuilder.append("/oauth/token?code=").append(code);
             urlBuilder.append("&grant_type=authorization_code");
-            urlBuilder.append("&redirect_uri=http://localhost:8090/showEmployees");
+            urlBuilder.append("&redirect_uri=").append(oauthRedirectUri);
             LOGGER.debug("urlBuilder:{}", urlBuilder);
             response = restTemplate.exchange(urlBuilder.toString(), HttpMethod.POST, request, String.class);
             LOGGER.debug("response.body:{}", response.getBody());
@@ -102,7 +133,21 @@ public class EmployeeController {
         LOGGER.debug("employees:{}", employees);
         ModelAndView model = new ModelAndView("showEmployees");
         model.addObject("employees", employees);
+        addOAuthConfig(model);
         LOGGER.debug("-showEmployees(), model: {}", model);
         return model;
+    }
+
+    /**
+     * Adds OAuth configuration to the model for use in JSP views.
+     *
+     * @param model the ModelAndView to add configuration to
+     */
+    private void addOAuthConfig(ModelAndView model) {
+        model.addObject("authServiceBaseUrl", authServiceBaseUrl);
+        model.addObject("clientBaseUrl", clientBaseUrl);
+        model.addObject("oauthClientId", oauthClientId);
+        model.addObject("oauthRedirectUri", oauthRedirectUri);
+        model.addObject("oauthScope", oauthScope);
     }
 }

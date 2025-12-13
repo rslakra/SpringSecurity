@@ -3,7 +3,6 @@ package com.rslakra.jwtauthentication1.security.jwt;
 import com.rslakra.jwtauthentication1.security.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,29 +12,27 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
-    @Autowired
-    private JwtUtils jwtUtils;
+    
+    private final JwtUtils jwtUtils;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-//    /**
-//     * @param jwtUtil
-//     * @param userDetailsService
-//     */
-//    public AuthTokenFilter(final JwtUtils jwtUtil, final UserDetailsServiceImpl userDetailsService) {
-//        logger.debug("AuthTokenFilter({}, {})", jwtUtil, userDetailsService);
-//        this.jwtUtils = jwtUtil;
-//        this.userDetailsService = userDetailsService;
-//    }
+    /**
+     * @param jwtUtils
+     * @param userDetailsService
+     */
+    public AuthTokenFilter(final JwtUtils jwtUtils, final UserDetailsServiceImpl userDetailsService) {
+        LOGGER.debug("AuthTokenFilter({}, {})", jwtUtils, userDetailsService);
+        this.jwtUtils = jwtUtils;
+        this.userDetailsService = userDetailsService;
+    }
 
 
     /**

@@ -1,117 +1,176 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+
 <head>
-    <title>Welcome to Our Site</title>
+    <title>Welcome</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Welcome to Our Site</h1>
-                <h2>Integrating Thymeleaf with Spring</h2>
-                <p>
-                    Thymeleaf offers a set of Spring integrations that allow you to use it as a fully-featured
-                    substitute for JSP in Spring MVC applications.
-                </p>
-                <p>
-                    These integrations will allow you to:
-                </p>
-                <p>
-                    Make the mapped methods in your Spring MVC @Controller objects forward to templates managed by
-                    Thymeleaf, exactly like you do with JSPs.
-                    Use Spring Expression Language (Spring EL) instead of OGNL in your templates.
-                </p>
-                <p>
-                    Create forms in your templates that are completely integrated with your form-backing beans and
-                    result bindings, including the use of property editors, conversion services and validation error
-                    handling.
-                    Display internationalization messages from message files managed by Spring (through the usual
-                    MessageSource objects).
-                </p>
-                <p>
-                    Resolve your templates using Spring’s own resource resolution mechanisms.
-                </p>
-                <p>
-                    Note that in order to fully understand this tutorial, you should have first gone through the
-                    “Using Thymeleaf” tutorial, which explains the Standard Dialect in depth.
-                </p>
+    <div layout:fragment="pageContent">
+        <!-- Hero Section -->
+        <div class="page-header">
+            <h1>🛡️ Spring Security Filter Chain</h1>
+            <p class="subtitle">Modern security configuration with SecurityFilterChain approach</p>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">🔐</div>
+                <h3>Authentication</h3>
+                <p>Secure login with form-based and HTTP Basic authentication</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🎫</div>
+                <h3>Authorization</h3>
+                <p>Role-based access control with USER and ADMIN roles</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">⛓️</div>
+                <h3>Filter Chain</h3>
+                <p>Custom SecurityFilterChain configuration (no WebSecurityConfigurerAdapter)</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🎯</div>
+                <h3>Method Security</h3>
+                <p>@PreAuthorize, @Secured, and @RolesAllowed annotations</p>
             </div>
         </div>
 
-        <div class="bottomNav">
-            <a class="btn" th:href="@{/index}">Home</a>
-            <a class="btn" th:href="@{/login}">Login</a>
-            <a class="btn" th:href="@{/admin}">Admin</a>
-            <a class="btn" th:href="@{/about-us}">About Us</a>
-            <a class="btn" th:href="@{/contact-us}">Contact Us</a>
-            <a class="btn" th:href="@{/user}">User</a>
-            <a class="btn" th:href="@{/all}">All</a>
-            <a class="btn" th:href="@{/logout}">Logout</a>
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🚀</div>
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="nav-pills">
+                <a class="nav-pill" th:href="@{/login}">🔐 Login</a>
+                <a class="nav-pill" th:href="@{/user}">👤 User Dashboard</a>
+                <a class="nav-pill" th:href="@{/admin}">⚙️ Admin Panel</a>
+                <a class="nav-pill" th:href="@{/all}">👥 All Roles</a>
+                <a class="nav-pill" th:href="@{/about-us}">ℹ️ About Us</a>
+                <a class="nav-pill" th:href="@{/contact-us}">✉️ Contact</a>
+            </div>
         </div>
 
-        <br/>
-
-        <div class="bottomNav">
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-            <form>
-                <div class="form-group">
-                    <label class="form-label">Message</label>
-                    <div class="col-sm-9">
-                        <input class="form-control"
-                               type="text" name="message" id="message"/>
+        <!-- Default Credentials -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🔑</div>
+                <h3 class="card-title">Default Credentials</h3>
+            </div>
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="icon primary">👤</div>
+                    <div>
+                        <div class="value">user</div>
+                        <div class="label">Password: userPass</div>
                     </div>
                 </div>
-
-                <div class="block">
-                    <button class="glyphicon glyphicon-trash" id="deleteButton">Delete</button>
+                <div class="stat-card">
+                    <div class="icon success">👑</div>
+                    <div>
+                        <div class="value">admin</div>
+                        <div class="label">Password: adminPass</div>
+                    </div>
                 </div>
-            </form>
-
-            <div class="block" id="deleteResponse"></div>
-
-            <!-- javascript -->
-            <script type="text/javascript">
-                $(document).ready(function () {
-                    $("button").click(function (event) {
-                        var baseUrl = window.location.origin;
-                        // console.log(window.location)
-                        if (!baseUrl.endsWith("security-filter-chain")) {
-                            baseUrl = baseUrl + "/security-filter-chain";
-                        }
-                        $.ajax({
-                            url: baseUrl + "/delete",
-                            method: "DELETE",
-                            headers: {
-                                "X-Api-Key": "rslakra"
-                            },
-                            data: {
-                                message: $("#message").val(),
-                            },
-                            success: function (response) {
-                                // redirect to another page
-                                // window.location.href = "/items";
-                                console.log(response)
-                                // alert('ok');
-                                $("#deleteResponse").html(response);
-                            },
-                            error: function (response) {
-                                console.log(response)
-                                // alert('error');
-                                $("#deleteResponse").html(response);
-                            }
-                        });
-                    });
-                });
-
-            </script>
+            </div>
         </div>
 
+        <!-- API Tester -->
+        <div class="card api-tester">
+            <h3>Test DELETE Endpoint (Admin Only)</h3>
+            <p class="text-muted">This endpoint requires ADMIN role. Login as admin to test.</p>
+
+            <form id="deleteForm">
+                <div class="form-group">
+                    <label class="form-label">Message to Delete</label>
+                    <input class="form-control" type="text" name="message" id="message"
+                        placeholder="Enter a resource name to delete..." />
+                </div>
+                <button type="submit" class="btn btn-danger" id="deleteButton">
+                    🗑️ Delete Resource
+                </button>
+            </form>
+
+            <div class="mt-3">
+                <label class="form-label">Response:</label>
+                <div class="api-response" id="deleteResponse">
+                    <em>Response will appear here...</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Info -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📚</div>
+                <h3 class="card-title">About SecurityFilterChain</h3>
+            </div>
+            <p>
+                Starting from Spring Security 5.7.0, the <code>WebSecurityConfigurerAdapter</code> is deprecated.
+                This application demonstrates the modern approach using <code>SecurityFilterChain</code> beans.
+            </p>
+            <div class="code-block">
+                <code>
+@Bean<br/>
+public SecurityFilterChain filterChain(HttpSecurity http) {<br/>
+&nbsp;&nbsp;return http<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;.authorizeHttpRequests(auth -> auth<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.requestMatchers("/admin/**").hasRole("ADMIN")<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.anyRequest().authenticated())<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;.formLogin(form -> form.loginPage("/login"))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;.build();<br/>
+}
+            </code>
+            </div>
+        </div>
     </div>
-</div>
+
+    <th:block layout:fragment="optional">
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('deleteForm');
+                const responseDiv = document.getElementById('deleteResponse');
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const message = document.getElementById('message').value;
+                    const baseUrl = window.location.origin + '/spring-security-filter-chain';
+
+                    fetch(baseUrl + '/delete', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Api-Key': 'rslakra'
+                        },
+                        body: 'message=' + encodeURIComponent(message)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            } else if (response.status === 401) {
+                                throw new Error('⚠️ Unauthorized: Please login first');
+                            } else if (response.status === 403) {
+                                throw new Error('🚫 Forbidden: Admin role required');
+                            } else {
+                                throw new Error('Error: ' + response.status);
+                            }
+                        })
+                        .then(html => {
+                            responseDiv.innerHTML = '<span class="text-success">✅ ' + html + '</span>';
+                        })
+                        .catch(error => {
+                            responseDiv.innerHTML = '<span class="text-danger">' + error.message + '</span>';
+                        });
+                });
+            });
+        </script>
+    </th:block>
 
 </body>
+
 </html>

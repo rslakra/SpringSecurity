@@ -1,25 +1,20 @@
 package com.rslakra.springsecurity.jwtbasedsecurity.utils;
 
-import static io.jsonwebtoken.SignatureAlgorithm.HS256;
-
 import com.rslakra.springsecurity.jwtbasedsecurity.model.JwtResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SigningKeyResolver;
-import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
 
 public enum JWTUtils {
     INSTANCE;
@@ -34,24 +29,24 @@ public enum JWTUtils {
     public static final String JWT_ID = "jti";
 
     /**
-     * @param servletRequest
-     * @return
+     * @param servletRequest the HTTP request
+     * @return true if port is 80
      */
     public static boolean isPort80(HttpServletRequest servletRequest) {
         return (Objects.nonNull(servletRequest) && servletRequest.getServerPort() == 80);
     }
 
     /**
-     * @param servletRequest
-     * @return
+     * @param servletRequest the HTTP request
+     * @return true if port is 443
      */
     public static boolean isPort443(HttpServletRequest servletRequest) {
         return (Objects.nonNull(servletRequest) && servletRequest.getServerPort() == 443);
     }
 
     /**
-     * @param servletRequest
-     * @return
+     * @param servletRequest the HTTP request
+     * @return the request URL
      */
     public static String getRequestUrl(HttpServletRequest servletRequest) {
         return servletRequest.getScheme()
@@ -59,113 +54,125 @@ public enum JWTUtils {
                + ((isPort80(servletRequest) || isPort443(servletRequest)) ? "" : ":" + servletRequest.getServerPort());
     }
 
+    /**
+     * Creates a SecretKey from byte array
+     *
+     * @param secretBytes the secret bytes
+     * @return SecretKey
+     */
+    private static SecretKey getSecretKey(byte[] secretBytes) {
+        // Ensure key is at least 256 bits for HS256
+        if (secretBytes.length < 32) {
+            byte[] paddedKey = new byte[32];
+            System.arraycopy(secretBytes, 0, paddedKey, 0, secretBytes.length);
+            secretBytes = paddedKey;
+        }
+        return Keys.hmacShaKeyFor(secretBytes);
+    }
 
     /**
-     * @param claims
-     * @param secretBytes
-     * @return
+     * @param claims      the claims map
+     * @param secretBytes the secret bytes
+     * @return the JWT compact string
      */
     public static String jwtCompactBuilderWithClaims(final Map<String, Object> claims, final byte[] secretBytes) {
-        final JwtBuilder jwtBuilder = Jwts.builder();
+        var builder = Jwts.builder();
+        
         claims.forEach((key, value) -> {
             switch (key) {
                 case ISSUER:
                     INSTANCE.assertClaimType(key, value, String.class);
-                    jwtBuilder.setIssuer((String) value);
+                    builder.issuer((String) value);
                     break;
                 case SUBJECT:
                     INSTANCE.assertClaimType(key, value, String.class);
-                    jwtBuilder.setSubject((String) value);
+                    builder.subject((String) value);
                     break;
                 case AUDIENCE:
                     INSTANCE.assertClaimType(key, value, String.class);
-                    jwtBuilder.setAudience((String) value);
+                    builder.audience().add((String) value);
                     break;
                 case EXPIRATION:
                     INSTANCE.assertClaimType(key, value, Long.class);
-                    jwtBuilder.setExpiration(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
+                    builder.expiration(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
                     break;
                 case NOT_BEFORE:
                     INSTANCE.assertClaimType(key, value, Long.class);
-                    jwtBuilder.setNotBefore(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
+                    builder.notBefore(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
                     break;
                 case ISSUED_AT:
                     INSTANCE.assertClaimType(key, value, Long.class);
-                    jwtBuilder.setIssuedAt(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
+                    builder.issuedAt(Date.from(Instant.ofEpochSecond(Long.parseLong(value.toString()))));
                     break;
                 case JWT_ID:
                     INSTANCE.assertClaimType(key, value, String.class);
-                    jwtBuilder.setId((String) value);
+                    builder.id((String) value);
                     break;
                 default:
-                    jwtBuilder.claim(key, value);
+                    builder.claim(key, value);
             }
         });
 
-        jwtBuilder.signWith(SignatureAlgorithm.HS256, secretBytes);
-        return jwtBuilder.compact();
+        builder.signWith(getSecretKey(secretBytes));
+        return builder.compact();
     }
 
-
     /**
-     * @param claims
-     * @param secretBytes
-     * @return
+     * @param claims      the claims map
+     * @param secretBytes the secret bytes
+     * @return JwtResponse
      */
     public static JwtResponse jwtBuilderWithClaims(final Map<String, Object> claims, final byte[] secretBytes) {
         return new JwtResponse(jwtCompactBuilderWithClaims(claims, secretBytes));
     }
 
     /**
-     * @param issuer
-     * @param subject
-     * @param issuedAtSeconds
-     * @param expiryInSeconds
-     * @param customClaims
-     * @param secretBytes
-     * @return
+     * @param issuer          the issuer
+     * @param subject         the subject
+     * @param issuedAtSeconds the issued at time in seconds
+     * @param expiryInSeconds the expiry time in seconds
+     * @param customClaims    the custom claims
+     * @param secretBytes     the secret bytes
+     * @return the JWT token
      */
     public static String jwtBuilder(String issuer, String subject, Long issuedAtSeconds, Long expiryInSeconds,
                                     Map<String, Object> customClaims, byte[] secretBytes) {
-        final JwtBuilder jwtBuilder = Jwts.builder();
+        var builder = Jwts.builder();
+        
         if (Objects.nonNull(issuer)) {
-            jwtBuilder.setIssuer(issuer);
+            builder.issuer(issuer);
         }
 
         if (Objects.nonNull(subject)) {
-            jwtBuilder.setSubject(subject);
+            builder.subject(subject);
         }
 
         if (Objects.nonNull(customClaims)) {
-            customClaims.forEach((key, value) -> jwtBuilder.claim(key, value));
+            customClaims.forEach(builder::claim);
         }
 
         if (Objects.nonNull(issuedAtSeconds)) {
-            jwtBuilder.setIssuedAt(Date.from(Instant.ofEpochSecond(issuedAtSeconds)));
+            builder.issuedAt(Date.from(Instant.ofEpochSecond(issuedAtSeconds)));
         }
 
         if (Objects.nonNull(expiryInSeconds)) {
-            jwtBuilder.setIssuedAt(Date.from(Instant.ofEpochSecond(expiryInSeconds)));
+            builder.expiration(Date.from(Instant.ofEpochSecond(expiryInSeconds)));
         }
 
-        jwtBuilder.signWith(SignatureAlgorithm.HS256, secretBytes);
-        String jwtToken = jwtBuilder.compact();
-        return jwtToken;
+        builder.signWith(getSecretKey(secretBytes));
+        return builder.compact();
     }
 
-
     /**
-     * @param claimKey
-     * @param claimValue
-     * @param claimType
+     * @param claimKey   the claim key
+     * @param claimValue the claim value
+     * @param claimType  the expected type
      */
-    private void assertClaimType(String claimKey, Object claimValue, Class claimType) {
-        boolean
-            validClaimType =
+    private void assertClaimType(String claimKey, Object claimValue, Class<?> claimType) {
+        boolean validClaimType =
             claimType.isInstance(claimValue) || claimType == Long.class && claimValue instanceof Integer;
         if (!validClaimType) {
-            String
-                errorMessage =
+            String errorMessage =
                 "Expected type: " + claimType.getCanonicalName() + " for claim: '" + claimKey
                 + "', but provided value: " + claimValue + " of type: " + claimValue.getClass().getCanonicalName();
             throw new JwtException(errorMessage);
@@ -173,19 +180,20 @@ public enum JWTUtils {
     }
 
     /**
-     * @param jwtToken
-     * @param signingKeyResolver
-     * @return
+     * @param jwtToken  the JWT token
+     * @param secretKey the secret key
+     * @return the parsed claims
      */
-    public static Jws<Claims> parseJWTToken(final String jwtToken, final SigningKeyResolver signingKeyResolver) {
+    public static Jws<Claims> parseJWTToken(final String jwtToken, final SecretKey secretKey) {
         return Jwts.parser()
-            .setSigningKeyResolver(signingKeyResolver)
-            .parseClaimsJws(jwtToken);
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(jwtToken);
     }
 
     /**
-     * @param token
-     * @return
+     * @param token the JWT token
+     * @return decoded header and payload
      */
     public static String decodeJWTToken(String token) {
         Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -196,10 +204,10 @@ public enum JWTUtils {
     }
 
     /**
-     * @param token
-     * @param secretKey
-     * @return
-     * @throws Exception
+     * @param token     the JWT token
+     * @param secretKey the secret key string
+     * @return decoded and verified header and payload
+     * @throws Exception if verification fails
      */
     public static String decodeJWTToken(String token, String secretKey) throws Exception {
         Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -207,15 +215,15 @@ public enum JWTUtils {
         String header = new String(decoder.decode(tokenChunks[0]));
         String payload = new String(decoder.decode(tokenChunks[1]));
 
-        String tokenWithoutSignature = tokenChunks[0] + "." + tokenChunks[1];
-        String signature = tokenChunks[2];
-
-        final SignatureAlgorithm algorithm = HS256;
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), algorithm.getJcaName());
-        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(algorithm, secretKeySpec);
-
-        if (!validator.isValid(tokenWithoutSignature, signature)) {
-            throw new Exception("Could not verify JWT token integrity!");
+        // Verify the token
+        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        try {
+            Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token);
+        } catch (JwtException e) {
+            throw new Exception("Could not verify JWT token integrity!", e);
         }
 
         return header + " " + payload;

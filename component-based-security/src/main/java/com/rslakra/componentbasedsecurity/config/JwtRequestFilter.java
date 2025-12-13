@@ -2,9 +2,12 @@ package com.rslakra.componentbasedsecurity.config;
 
 import com.rslakra.componentbasedsecurity.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,33 +17,30 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private static Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
 
-    @Autowired
-    private JwtUtils jwtTokenUtil;
+    private final JwtUtils jwtTokenUtil;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    public JwtRequestFilter(JwtUtils jwtTokenUtil, UserDetailsServiceImpl userDetailsService) {
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsService = userDetailsService;
+    }
 
     /**
-     * @param request
-     * @param response
-     * @param chain
-     * @throws ServletException
-     * @throws IOException
+     * @param request     the HTTP request
+     * @param response    the HTTP response
+     * @param chain       the filter chain
+     * @throws ServletException if servlet error occurs
+     * @throws IOException      if I/O error occurs
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
-        logger.debug("+doFilterInternal(" + request + ", " + response + ", " + chain + ")");
+        logger.debug("+doFilterInternal({}, {}, {})", request, response, chain);
         final String requestToken = request.getHeader(JwtUtils.AUTHORIZATION);
         String userName = null;
         String jwtToken = null;

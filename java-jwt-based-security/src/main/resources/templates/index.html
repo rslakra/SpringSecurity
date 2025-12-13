@@ -1,34 +1,326 @@
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head}">
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="box col-md-6 col-md-offset-3">
-            <h1>Available Commands:</h1>
-            <h2>(assumes httpie - https://github.com/jkbrzt/httpie):</h2>
-            <h3 th:text="'http ' + ${requestUrl}">http</h3>
-            <p>This usage message</p>
-            <p th:text="'http ' + ${requestUrl} + '/static-builder'"></p>
-            <p>build JWT from hardcoded claims</p>
-            <p th:text="'http POST ' + ${requestUrl} + '/dynamic-builder-general claim-1=value-1 ... [claim-n=value-n]'"></p>
-            <p>build JWT from passed in claims (using general claims map)</p>
-            <p th:text="'http POST ' +  ${requestUrl} + '/dynamic-builder-specific claim-1=value-1 ... [claim-n=value-n]'"></p>
-            <p>build JWT from passed in claims (using specific claims methods)</p>
-            <p th:text="'http POST ' +  ${requestUrl} + '/dynamic-builder-compress claim-1=value-1 ... [claim-n=value-n]'"></p>
-            <p>build DEFLATE compressed JWT from passed in claims</p>
-            <p th:text="'http ' +  ${requestUrl} + '/parser?jwt=<jwt>'"></p>
-            <p>Parse passed in JWT</p>
-            <p th:text="'http ' + ${requestUrl} + '/parser-enforce?jwt=<jwt>'"></p>
-            <p>Parse passed in JWT enforcing the 'iss' registered claim and the 'hasAutomobile' custom claim</p>
-            <p th:text="'http  ' +  ${requestUrl} + '/get-secrets'"></p>
-            <p>Show the signing keys currently in use.</p>
-            <p th:text="'http ' +  ${requestUrl} + '/refresh-secrets'"></p>
-            <p>Generate new signing keys and show them.</p>
-            <p th:text="'http POST ' +  ${requestUrl} + '/set-secrets HS256=base64-encoded-value HS384=base64-encoded-value HS512=base64-encoded-value'"></p>
-            <p>Explicitly set secrets to use in the application.</p>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🔐 JWT API Explorer</h1>
+            <p>Interactive API documentation for Java JWT Based Security</p>
+            <div style="margin-top: 1rem;">
+                <span class="badge badge-blue">Spring Boot 3.5</span>
+                <span class="badge badge-green">JJWT 0.12.6</span>
+                <span class="badge badge-purple">Java 21</span>
+            </div>
+        </header>
+
+        <!-- Quick Info -->
+        <div class="alert alert-info">
+            <strong>💡 Base URL:</strong> <code th:text="${requestUrl}"
+                style="color: var(--accent-green);">http://localhost:8080</code>
         </div>
+
+        <!-- JWT Generation Section -->
+        <h2 class="section-title">🔨 JWT Generation</h2>
+
+        <!-- Static Builder -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/static-builder</span>
+                <span class="endpoint-desc">Generate JWT with predefined claims</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Creates a JWT token with hardcoded claims including issuer, subject, name, and scope.
+                </p>
+
+                <div class="code-block">
+                    <div class="code-block-header">
+                        <span class="code-block-title">Request</span>
+                        <button class="copy-btn"
+                            onclick="copyToClipboard(this, 'curl ' + baseUrl + '/static-builder')">Copy</button>
+                    </div>
+                    <pre><span class="curl-cmd">curl</span> <span class="curl-url" th:text="${requestUrl} + '/static-builder'">http://localhost:8080/static-builder</span></pre>
+                </div>
+
+                <button class="try-btn" onclick="tryEndpoint('/static-builder', 'GET', null, this)">
+                    ▶ Try It
+                </button>
+
+                <div class="response-area" id="response-static-builder"></div>
+            </div>
+        </div>
+
+        <!-- Dynamic Builder General -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/dynamic-builder-general</span>
+                <span class="endpoint-desc">Build JWT with custom claims</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Creates a JWT token with any claims you provide in the request body.
+                </p>
+
+                <div class="input-group">
+                    <label>Request Body (JSON)</label>
+                    <textarea id="body-dynamic-general" placeholder='{
+  "sub": "rslakra",
+  "name": "Rohtash Lakra",
+  "admin": true
+}'>{
+  "sub": "rslakra",
+  "name": "Rohtash Lakra",
+  "admin": true
+}</textarea>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-block-header">
+                        <span class="code-block-title">cURL Example</span>
+                    </div>
+                    <pre><span class="curl-cmd">curl</span> <span class="curl-flag">-X POST</span> <span class="curl-url" th:text="${requestUrl} + '/dynamic-builder-general'">http://localhost:8080/dynamic-builder-general</span> \
+  <span class="curl-flag">-H</span> <span class="json-string">"Content-Type: application/json"</span> \
+  <span class="curl-flag">-d</span> <span class="json-string">'{"sub": "rslakra", "name": "Rohtash Lakra"}'</span></pre>
+                </div>
+
+                <button class="try-btn"
+                    onclick="tryEndpoint('/dynamic-builder-general', 'POST', 'body-dynamic-general', this)">
+                    ▶ Try It
+                </button>
+
+                <div class="response-area" id="response-dynamic-general"></div>
+            </div>
+        </div>
+
+        <!-- Dynamic Builder Specific -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/dynamic-builder-specific</span>
+                <span class="endpoint-desc">Build JWT with registered claims</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Creates a JWT using specific registered claim methods (iss, sub, aud, exp, nbf, iat, jti).
+                </p>
+
+                <div class="input-group">
+                    <label>Request Body (JSON)</label>
+                    <textarea id="body-dynamic-specific">{
+  "iss": "Rohtash Lakra",
+  "sub": "rslakra",
+  "iat": 1466796822,
+  "exp": 4622470422
+}</textarea>
+                </div>
+
+                <button class="try-btn"
+                    onclick="tryEndpoint('/dynamic-builder-specific', 'POST', 'body-dynamic-specific', this)">
+                    ▶ Try It
+                </button>
+
+                <div class="response-area" id="response-dynamic-specific"></div>
+            </div>
+        </div>
+
+        <!-- Dynamic Builder Compress -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/dynamic-builder-compress</span>
+                <span class="endpoint-desc">Build compressed JWT (DEFLATE)</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Creates a DEFLATE compressed JWT token. Useful for large payloads.
+                </p>
+
+                <div class="input-group">
+                    <label>Request Body (JSON)</label>
+                    <textarea id="body-compress">{
+  "sub": "rslakra",
+  "data": "This is some data that will be compressed"
+}</textarea>
+                </div>
+
+                <button class="try-btn"
+                    onclick="tryEndpoint('/dynamic-builder-compress', 'POST', 'body-compress', this)">
+                    ▶ Try It
+                </button>
+
+                <div class="response-area" id="response-compress"></div>
+            </div>
+        </div>
+
+        <!-- JWT Parsing Section -->
+        <h2 class="section-title">🔍 JWT Parsing</h2>
+
+        <!-- Parser -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/parser</span>
+                <span class="endpoint-desc">Parse and decode a JWT token</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Parses the provided JWT token and returns the decoded claims.
+                </p>
+
+                <div class="input-group">
+                    <label>JWT Token</label>
+                    <input type="text" id="jwt-parser" placeholder="Paste your JWT token here..." />
+                </div>
+
+                <div class="alert alert-warning" style="font-size: 0.85rem;">
+                    ⚠️ First generate a token using <code>/static-builder</code>, then paste it here to parse.
+                </div>
+
+                <button class="try-btn" onclick="parseJwt('/parser', 'jwt-parser', this)">
+                    ▶ Parse Token
+                </button>
+
+                <div class="response-area" id="response-parser"></div>
+            </div>
+        </div>
+
+        <!-- Parser Enforce -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/parser-enforce</span>
+                <span class="endpoint-desc">Parse JWT with claim enforcement</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Parses JWT and enforces that <code>iss</code> equals "Rohtash Lakra" and <code>hasAutomobile</code>
+                    is true.
+                </p>
+
+                <div class="input-group">
+                    <label>JWT Token (must have iss="Rohtash Lakra" and hasAutomobile=true)</label>
+                    <input type="text" id="jwt-parser-enforce" placeholder="Paste your JWT token here..." />
+                </div>
+
+                <button class="try-btn" onclick="parseJwt('/parser-enforce', 'jwt-parser-enforce', this)">
+                    ▶ Parse with Enforcement
+                </button>
+
+                <div class="response-area" id="response-parser-enforce"></div>
+            </div>
+        </div>
+
+        <!-- Secrets Management Section -->
+        <h2 class="section-title">🔑 Secrets Management</h2>
+
+        <!-- Get Secrets -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/get-secrets</span>
+                <span class="endpoint-desc">View current signing keys</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Returns the Base64-encoded signing keys currently in use for HS256, HS384, and HS512.
+                </p>
+
+                <button class="try-btn" onclick="tryEndpoint('/get-secrets', 'GET', null, this)">
+                    ▶ Get Secrets
+                </button>
+
+                <div class="response-area" id="response-get-secrets"></div>
+            </div>
+        </div>
+
+        <!-- Refresh Secrets -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/refresh-secrets</span>
+                <span class="endpoint-desc">Generate new signing keys</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Generates new random signing keys for all algorithms and returns them.
+                </p>
+
+                <div class="alert alert-warning" style="font-size: 0.85rem;">
+                    ⚠️ This will invalidate all previously generated tokens!
+                </div>
+
+                <button class="try-btn" onclick="tryEndpoint('/refresh-secrets', 'GET', null, this)">
+                    ▶ Refresh Secrets
+                </button>
+
+                <div class="response-area" id="response-refresh-secrets"></div>
+            </div>
+        </div>
+
+        <!-- Set Secrets -->
+        <div class="api-card">
+            <div class="api-card-header" onclick="toggleCard(this)">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/set-secrets</span>
+                <span class="endpoint-desc">Set custom signing keys</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Set custom Base64-encoded signing keys for each algorithm.
+                </p>
+
+                <div class="input-group">
+                    <label>Request Body (JSON)</label>
+                    <textarea id="body-set-secrets">{
+  "HS256": "your-base64-encoded-256-bit-secret",
+  "HS384": "your-base64-encoded-384-bit-secret",
+  "HS512": "your-base64-encoded-512-bit-secret"
+}</textarea>
+                </div>
+
+                <button class="try-btn" onclick="tryEndpoint('/set-secrets', 'POST', 'body-set-secrets', this)">
+                    ▶ Set Secrets
+                </button>
+
+                <div class="response-area" id="response-set-secrets"></div>
+            </div>
+        </div>
+
+        <!-- CSRF Demo Section -->
+        <h2 class="section-title">🛡️ CSRF Demo</h2>
+
+        <div class="api-card">
+            <div class="api-card-header">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/jwt-csrf-form</span>
+                <span class="endpoint-desc">JWT-based CSRF protection demo</span>
+            </div>
+            <div class="api-card-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Demonstrates JWT-based CSRF token protection. The form uses a short-lived JWT as the CSRF token.
+                </p>
+                <a href="/jwt-csrf-form" class="try-btn" style="text-decoration: none; display: inline-block;">
+                    Open CSRF Form Demo →
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
     </div>
-</div>
+
+    <!-- Application Scripts -->
+    <script th:src="@{/js/actions.js}" src="/js/actions.js"></script>
+    <script th:inline="javascript">
+        // Initialize base URL from server
+        initBaseUrl(/*[[${requestUrl}]]*/ 'http://localhost:8080');
+    </script>
 </body>
+
 </html>

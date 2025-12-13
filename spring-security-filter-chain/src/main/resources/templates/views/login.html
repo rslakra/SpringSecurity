@@ -1,75 +1,80 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+
 <head>
     <title>Login</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-heading">Login</div>
-            <div class="panel-body">
-                <form action="#" th:action="@{/auth/login}" method="post">
-                    <!-- Login Errors -->
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <!--error message -->
-                            <div th:if="${param.error}" class="alert alert-danger alert-dismissable">
-                                <p>
-                                    <i class="icon fa fa-ban"></i>
-                                    <span th:text="#{login.error.failed}">Invalid Credentials!</span>
-                                </p>
-                            </div>
-                            <!-- logout message -->
-                            <div th:if="${param.logout}" class="alert alert-info alert-dismissable">
-                                <p>
-                                    <i class="icon fa fa-info"></i>
-                                    <span th:text="#{logout.success}">Logout!</span>
-                                </p>
-                            </div>
-                            <!-- message -->
-                            <div th:if="${param.message!=null}" class="alert alert-warning alert-dismissable">
-                                <p>
-                                    <i class="icon fa fa-warning"></i>
-                                    <span th:text="${param.message}"></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+    <div layout:fragment="pageContent">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="icon">🔐</div>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to your account</p>
+                </div>
 
-                    <!-- Login Fields -->
+                <!-- Error/Success Messages -->
+                <div th:if="${param.error}" class="alert alert-danger">
+                    ❌ Invalid username or password
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success">
+                    ✅ You have been logged out successfully
+                </div>
+                <div th:if="${param.registered}" class="alert alert-success">
+                    ✅ Registration successful! Please login with your credentials.
+                </div>
+                <div th:if="${param.message}" class="alert alert-warning">
+                    ⚠️ <span th:text="${param.message}"></span>
+                </div>
+
+                <!-- Login Form -->
+                <form th:action="@{/login}" method="post">
                     <div class="form-group">
-                        <input type="text" class="form-control input-lg" name="userName" required="true"
-                               autofocus=""true placeholder="Username"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control input-lg" name="password" required="true"
-                               autofocus=""true placeholder="Password"/>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" name="remember-me"> Remember Me
-                        </label>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-xs-offset-8 col-xs-4">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Login
-                            </button>
-                        </div>
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" placeholder="Enter your username"
+                            required autofocus />
                     </div>
 
                     <div class="form-group">
-                        <span>New user? <a href="/static" th:href="@{/registration}">Register</a></span>
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter your password"
+                            required />
                     </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="remember-me" id="rememberMe" />
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                        🔐 Sign In
+                    </button>
                 </form>
+
+                <div class="mt-3 text-center">
+                    <p class="text-muted">
+                        New user? <a th:href="@{/register}">Register here</a>
+                    </p>
+                </div>
+
+                <!-- Demo Credentials -->
+                <div class="mt-3" style="padding: 1rem; background: var(--gray-50); border-radius: var(--radius-md);">
+                    <p class="text-muted mb-1" style="font-size: 0.85rem;">Demo Credentials:</p>
+                    <p style="font-size: 0.85rem; margin: 0;">
+                        👤 <strong>user</strong> / userPass<br />
+                        👑 <strong>admin</strong> / adminPass
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 </body>
+
 </html>

@@ -1,18 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <!--/*/ <th:block th:include="fragments/head :: head"/> /*/-->
+
+<head th:replace="~{fragments/head :: head}">
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="box col-md-6 col-md-offset-3">
-            <h1>You made it!</h1>
-            <div style="overflow: scroll">
-                <h4 th:text="${csrf}">LAKRA</h4>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>✅ Success!</h1>
+            <p>CSRF Token Validated Successfully</p>
+        </header>
+
+        <div class="api-card api-card-success">
+            <div class="api-card-header">
+                <span class="method-badge">200</span>
+                <span class="endpoint-path">Form Submission Successful</span>
+            </div>
+            <div class="api-card-body">
+                <p class="description text-center">
+                    🎉 The JWT CSRF token was valid and not expired. Here's the token that was submitted:
+                </p>
+
+                <div class="code-block response-success">
+                    <div class="code-block-header">
+                        <span class="code-block-title">JWT CSRF Token</span>
+                        <button class="copy-btn" onclick="copyToken()">Copy</button>
+                    </div>
+                    <pre id="csrf-token" class="word-break-all" th:text="${csrf}">token-placeholder</pre>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong>Token Structure:</strong> The JWT consists of three parts separated by dots:
+                    <code>header.payload.signature</code>
+                </div>
             </div>
         </div>
+
+        <div class="actions">
+            <a href="/jwt-csrf-form" class="try-btn">
+                🔄 Try Again
+            </a>
+            <a href="/" class="back-link">
+                ← Back to API Explorer
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
     </div>
-</div>
+
+    <script th:src="@{/js/actions.js}" src="/js/actions.js"></script>
 </body>
+
 </html>

@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <!--/*/ <th:block th:include="fragments/head :: head"/> /*/-->
+
+<head th:replace="~{fragments/head :: head}">
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="box col-md-6 col-md-offset-3">
-            <p/>
-            <form method="post" th:action="@{/jwt-csrf-form}">
-                <input type="submit" class="btn btn-primary" value="Click Me!"/>
-            </form>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🛡️ CSRF Token Demo</h1>
+            <p>JWT-based CSRF Protection Test</p>
+        </header>
+
+        <div class="api-card">
+            <div class="api-card-header">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/jwt-csrf-form</span>
+                <span class="endpoint-desc">Submit form with JWT CSRF token</span>
+            </div>
+            <div class="api-card-body text-center">
+                <p class="description mb-4">
+                    This form demonstrates JWT-based CSRF protection. When you click the button,
+                    a JWT token is sent as the CSRF token. The token expires in <strong>30 seconds</strong>.
+                </p>
+
+                <div class="alert alert-info text-left mb-4">
+                    <strong>How it works:</strong>
+                    <ul class="info-list">
+                        <li>A JWT token is generated with a 30-second expiration</li>
+                        <li>The token is stored in the session and sent with the form</li>
+                        <li>On submission, the server validates the JWT signature and expiration</li>
+                        <li>If the token is expired or invalid, you'll see an error page</li>
+                    </ul>
+                </div>
+
+                <form method="post" th:action="@{/jwt-csrf-form}">
+                    <button type="submit" class="try-btn btn-lg">
+                        🚀 Submit Form with JWT CSRF Token
+                    </button>
+                </form>
+
+                <p class="tip">
+                    💡 Tip: Wait more than 30 seconds before clicking to see the expiration error.
+                </p>
+            </div>
         </div>
+
+        <div class="actions">
+            <a href="/" class="back-link">
+                ← Back to API Explorer
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
     </div>
-</div>
 </body>
+
 </html>

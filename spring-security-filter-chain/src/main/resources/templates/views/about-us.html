@@ -1,43 +1,80 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
+
 <head>
     <title>About Us</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>About Us</h1>
-            <a class="btn text-right" th:href="@{/index}">Home</a>
+    <div layout:fragment="pageContent">
+        <div class="page-header">
+            <h1>ℹ️ About Us</h1>
+            <p class="subtitle">Learn more about this project</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">Spring Security Filter Chain Demo</h3>
+            </div>
+
+            <p>
+                This application demonstrates the modern approach to configuring Spring Security
+                using the <code>SecurityFilterChain</code> API, replacing the deprecated
+                <code>WebSecurityConfigurerAdapter</code>.
+            </p>
+
             <p>
                 A computer is a machine that can be programmed to carry out sequences of arithmetic or logical
                 operations (computation) automatically. Modern digital electronic computers can perform generic sets
-                of operations known as programs. These programs enable computers to perform a wide range of tasks. A
-                computer system is a nominally complete computer that includes the hardware, operating system (main
-                software), and peripheral equipment needed and used for full operation. This term may also refer to
-                a group of computers that are linked and function together, such as a computer network or computer
-                cluster.
+                of operations known as programs. These programs enable computers to perform a wide range of tasks.
             </p>
+
             <p>
                 कंप्यूटर एक मशीन है जिसे स्वचालित रूप से अंकगणितीय या तार्किक संचालन (गणना) के अनुक्रमों को पूरा
                 करने के लिए प्रोग्राम किया जा सकता है। आधुनिक डिजिटल इलेक्ट्रॉनिक कंप्यूटर प्रोग्राम के रूप में
-                ज्ञात संचालन के सामान्य सेट कर सकते हैं। ये प्रोग्राम कंप्यूटर को कई प्रकार के कार्य करने में सक्षम
-                बनाते हैं। एक कंप्यूटर सिस्टम एक नाममात्र पूर्ण कंप्यूटर है जिसमें हार्डवेयर, ऑपरेटिंग सिस्टम (मुख्य
-                सॉफ़्टवेयर), और परिधीय उपकरण शामिल हैं और पूर्ण संचालन के लिए उपयोग किया जाता है। यह शब्द उन
-                कंप्यूटरों के समूह को भी संदर्भित कर सकता है जो एक साथ जुड़े हुए हैं और एक साथ काम करते हैं, जैसे
-                कंप्यूटर नेटवर्क या कंप्यूटर क्लस्टर।
+                ज्ञात संचालन के सामान्य सेट कर सकते हैं।
             </p>
         </div>
-    </div>
-</div>
 
-<th:block th:fragment="optional">
-    <!-- optional items here. -->
-</th:block>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🔧</div>
+                <h3 class="card-title">Technologies Used</h3>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">☕</div>
+                    <h3>Java 21</h3>
+                    <p>Latest LTS version</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🍃</div>
+                    <h3>Spring Boot 3.5.7</h3>
+                    <p>Modern framework</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛡️</div>
+                    <h3>Spring Security 6</h3>
+                    <p>SecurityFilterChain</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h3>Thymeleaf</h3>
+                    <p>Template engine</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-pills">
+            <a class="nav-pill" th:href="@{/}">🏠 Back to Home</a>
+            <a class="nav-pill" th:href="@{/contact-us}">✉️ Contact Us</a>
+        </div>
+    </div>
 
 </body>
+
 </html>

@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
 
 <head>
-    <title>AccessDenied</title>
+    <title>Access Denied</title>
 </head>
+
 <body>
-<p>You are not authorized to view this page!!</p>
+
+    <div layout:fragment="pageContent">
+        <div class="error-page">
+            <div class="error-code">403</div>
+            <h1>Access Denied</h1>
+            <p>You don't have permission to access this resource.</p>
+
+            <div class="nav-pills" style="justify-content: center;">
+                <a class="nav-pill" th:href="@{/}">🏠 Go Home</a>
+                <a class="nav-pill" th:href="@{/login}">🔐 Login</a>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

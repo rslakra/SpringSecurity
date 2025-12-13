@@ -15,14 +15,14 @@ public class ContextUser implements UserDetails {
     private String password;
     private List<GrantedAuthority> grantedAuthorities;
     private boolean accessToRestrictedPolicy;
-    private boolean accountNonExpired = false;
-    private boolean accountNonLocked = false;
-    private boolean credentialsNonExpired = false;
-    private boolean enabled = false;
+    private boolean accountNonExpired = true;
+    private boolean accountNonLocked = true;
+    private boolean credentialsNonExpired = true;
+    private boolean enabled = true;
 
     /**
-     * @param restrictedPolicy
-     * @return
+     * @param restrictedPolicy whether user has access to restricted policy
+     * @return this ContextUser
      */
     public ContextUser withAccessToRestrictedPolicy(boolean restrictedPolicy) {
         this.accessToRestrictedPolicy = restrictedPolicy;
@@ -30,15 +30,15 @@ public class ContextUser implements UserDetails {
     }
 
     /**
-     * @return
+     * @return true if user has access to restricted policy
      */
     public boolean hasAccessToRestrictedPolicy() {
         return accessToRestrictedPolicy;
     }
 
     /**
-     * @param grantedAuthorities
-     * @return
+     * @param grantedAuthorities the granted authorities
+     * @return this ContextUser
      */
     public ContextUser withGrantedAuthorities(List<GrantedAuthority> grantedAuthorities) {
         this.grantedAuthorities = grantedAuthorities;
@@ -46,15 +46,15 @@ public class ContextUser implements UserDetails {
     }
 
     /**
-     * @param roles
-     * @return
+     * @param roles the roles
+     * @return this ContextUser
      */
     public ContextUser withRoles(String... roles) {
         return withGrantedAuthorities(fromRoles(roles));
     }
 
     /**
-     * @return
+     * @return the granted authorities
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -62,8 +62,8 @@ public class ContextUser implements UserDetails {
     }
 
     /**
-     * @param password
-     * @return
+     * @param password the password
+     * @return this ContextUser
      */
     public ContextUser withPassword(String password) {
         this.password = password;
@@ -71,7 +71,7 @@ public class ContextUser implements UserDetails {
     }
 
     /**
-     * @return
+     * @return the password
      */
     @Override
     public String getPassword() {
@@ -79,49 +79,64 @@ public class ContextUser implements UserDetails {
     }
 
     /**
-     * @param userName
-     * @return
+     * @param userName the username
+     * @return this ContextUser
      */
     public ContextUser withUserName(String userName) {
         this.userName = userName;
         return this;
     }
 
+    /**
+     * @return the username
+     */
     @Override
     public String getUsername() {
         return this.userName;
     }
 
+    /**
+     * @return true if account is not expired
+     */
     @Override
     public boolean isAccountNonExpired() {
         return accountNonExpired;
     }
 
+    /**
+     * @return true if account is not locked
+     */
     @Override
     public boolean isAccountNonLocked() {
         return accountNonLocked;
     }
 
+    /**
+     * @return true if credentials are not expired
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return credentialsNonExpired;
     }
 
+    /**
+     * @return true if user is enabled
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * @return
+     * @return new ContextUser builder
      */
     public static ContextUser builder() {
         return new ContextUser();
     }
 
     /**
-     * @param roles
-     * @return
+     * @param roles the roles
+     * @return list of GrantedAuthority
      */
     public static List<GrantedAuthority> fromRoles(String... roles) {
         return Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());

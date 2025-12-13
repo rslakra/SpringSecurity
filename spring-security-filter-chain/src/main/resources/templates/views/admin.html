@@ -1,50 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+
 <head>
-    <title>Home</title>
+    <title>Admin Panel</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="container">
-        <div class="row">
-            <a class="btn text-right" th:href="@{/index}">Home</a>
+    <div layout:fragment="pageContent">
+        <div class="page-header">
+            <h1>⚙️ Admin Panel</h1>
+            <p class="subtitle">Manage your application settings</p>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <p>
-                    Welcome <span sec:authentication="principal.username">User</span>
-                </p>
-                <div sec:authorize="isRememberMe()">
-                    The user: <span sec:authentication="name"></span> is logged in by "Remember Me Cookies".
-                </div>
 
-                <div sec:authorize="isFullyAuthenticated()">
-                    The user: <span sec:authentication="name"></span> is logged in by "Username/Password".
+        <!-- Admin Welcome Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">👑</div>
+                <h3 class="card-title">Welcome, Administrator!</h3>
+            </div>
+
+            <div class="user-badge mb-3">
+                <div class="avatar">👑</div>
+                <div class="info">
+                    <div class="name" sec:authentication="name">Admin</div>
+                    <div class="role" sec:authentication="principal.authorities">[ROLE_ADMIN]</div>
                 </div>
-                <p>
-                    <a th:href="@{/logout}">Logout</a>
-                </p>
+            </div>
+
+            <p>You have full administrative access to this application.</p>
+        </div>
+
+        <!-- Admin Stats -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="icon primary">👥</div>
+                <div>
+                    <div class="value">2</div>
+                    <div class="label">Total Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon success">✅</div>
+                <div>
+                    <div class="value">Active</div>
+                    <div class="label">System Status</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon warning">🔐</div>
+                <div>
+                    <div class="value">2</div>
+                    <div class="label">Roles Configured</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon danger">🛡️</div>
+                <div>
+                    <div class="value">12</div>
+                    <div class="label">Security Filters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🔧</div>
+                <h3 class="card-title">Admin Actions</h3>
+            </div>
+            <div class="nav-pills">
+                <a class="nav-pill" th:href="@{/}">🏠 Home</a>
+                <a class="nav-pill" th:href="@{/user}">👤 User Dashboard</a>
+                <a class="nav-pill" th:href="@{/all}">👥 All Roles</a>
+                <a class="nav-pill" th:href="@{/logout}">🚪 Logout</a>
             </div>
         </div>
     </div>
-</div>
-
-<footer>
-    <div class="container">
-        <p>
-            &copy; Arcturus
-            <span sec:authorize="isAuthenticated()" style="display: inline-block;">
-                | Logged user: <span sec:authentication="name"></span>
-                | Roles: <span sec:authentication="principal.authorities"></span>
-                | <a th:href="@{/logout}">Sign Out</a>
-            </span>
-        </p>
-    </div>
-</footer>
 
 </body>
+
 </html>

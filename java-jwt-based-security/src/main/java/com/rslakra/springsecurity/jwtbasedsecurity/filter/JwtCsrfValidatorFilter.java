@@ -2,18 +2,16 @@ package com.rslakra.springsecurity.jwtbasedsecurity.filter;
 
 import com.rslakra.springsecurity.jwtbasedsecurity.service.SecretsService;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Rohtash Lakra
@@ -25,8 +23,8 @@ public final class JwtCsrfValidatorFilter extends OncePerRequestFilter {
     private final String[] ignoredCsrfAntMatchers;
 
     /**
-     * @param secretsService
-     * @param ignoredCsrfAntMatchers
+     * @param secretsService         the secrets service
+     * @param ignoredCsrfAntMatchers the ignored CSRF matchers
      */
     public JwtCsrfValidatorFilter(SecretsService secretsService, String[] ignoredCsrfAntMatchers) {
         this.secretsService = secretsService;
@@ -34,11 +32,11 @@ public final class JwtCsrfValidatorFilter extends OncePerRequestFilter {
     }
 
     /**
-     * @param servletRequest
-     * @param servletResponse
-     * @param filterChain
-     * @throws ServletException
-     * @throws IOException
+     * @param servletRequest  the HTTP request
+     * @param servletResponse the HTTP response
+     * @param filterChain     the filter chain
+     * @throws ServletException if servlet error occurs
+     * @throws IOException      if I/O error occurs
      */
     @Override
     protected void doFilterInternal(HttpServletRequest servletRequest, HttpServletResponse servletResponse,
@@ -56,19 +54,17 @@ public final class JwtCsrfValidatorFilter extends OncePerRequestFilter {
             Arrays.binarySearch(ignoredCsrfAntMatchers, servletRequest.getServletPath()) < 0 && csrfToken != null) {
             // CsrfFilter already made sure the csrfToken matched. Here, we'll make sure it's not expired
             try {
-                Jwts.parser()
-                    .setSigningKeyResolver(secretsService.getSigningKeyResolver())
-                    .parseClaimsJws(csrfToken.getToken());
+                secretsService.parseToken(csrfToken.getToken());
             } catch (JwtException e) {
                 // most likely an ExpiredJwtException, but this will handle any
                 servletRequest.setAttribute("exception", e);
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("expired-jwt");
                 dispatcher.forward(servletRequest, servletResponse);
+                return;
             }
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
-
 }

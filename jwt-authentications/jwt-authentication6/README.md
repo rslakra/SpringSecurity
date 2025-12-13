@@ -1,4 +1,22 @@
-# Spring Boot JWT Authentication example with Spring Security & Spring Data JPA
+# Spring Boot JWT Authentication
+
+A Spring Boot 3.5.7 example demonstrating JWT authentication with Spring Security & Spring Data JPA.
+
+## Tech Stack
+
+| Technology | Version |
+|------------|---------|
+| Spring Boot | 3.5.7 |
+| Spring Security | 6.x |
+| Java | 21 |
+
+## Features
+
+- JWT token-based authentication
+- Spring Security integration
+- Spring Data JPA for persistence
+- H2 Database (default) or MySQL/PostgreSQL support
+- Role-based access control
 
 For more detail, please visit:
 > [Secure Spring Boot App with Spring Security & JWT Authentication](https://bezkoder.com/spring-boot-jwt-authentication/)

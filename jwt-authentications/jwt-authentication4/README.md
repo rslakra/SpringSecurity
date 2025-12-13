@@ -1,4 +1,16 @@
-# Protect REST APIs with Spring Security and JWT 
+# Protect REST APIs with Spring Security and JWT
+
+A Spring Boot 3.5.7 example demonstrating JWT-based authentication for protecting REST APIs.
+
+## Tech Stack
+
+| Technology | Version |
+|------------|---------|
+| Spring Boot | 3.5.7 |
+| Spring Security | 6.x |
+| Java | 21 |
+
+## Overview
 
 When you design REST APIs, you have to consider how to protect REST APIs. In a Spring based application, Spring Security is a great authentication and authorization solution, and it provides several options for securing your REST APIs. 
 

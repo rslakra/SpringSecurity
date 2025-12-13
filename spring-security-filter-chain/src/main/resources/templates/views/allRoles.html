@@ -1,50 +1,92 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+
 <head>
-    <title>Home</title>
+    <title>All Roles</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="container">
-        <div class="row">
-            <a class="btn text-right" th:href="@{/index}">Home</a>
+    <div layout:fragment="pageContent">
+        <div class="page-header">
+            <h1>👥 All Roles Access</h1>
+            <p class="subtitle">This page is accessible by all authenticated users</p>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <p>
-                    Welcome <span sec:authentication="principal.username">User</span>
-                </p>
-                <div sec:authorize="isRememberMe()">
-                    The user: <span sec:authentication="name"></span> is logged in by "Remember Me Cookies".
-                </div>
 
-                <div sec:authorize="isFullyAuthenticated()">
-                    The user: <span sec:authentication="name"></span> is logged in by "Username/Password".
+        <!-- User Info Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🎫</div>
+                <h3 class="card-title">Your Access Information</h3>
+            </div>
+
+            <div class="user-badge mb-3">
+                <div class="avatar" sec:authentication="principal.username">U</div>
+                <div class="info">
+                    <div class="name" sec:authentication="name">Username</div>
+                    <div class="role" sec:authentication="principal.authorities">[ROLE]</div>
                 </div>
-                <p>
-                    <a th:href="@{/logout}">Logout</a>
-                </p>
+            </div>
+
+            <div sec:authorize="isRememberMe()" class="alert alert-info">
+                🍪 You are logged in via "Remember Me" cookie
+            </div>
+
+            <div sec:authorize="isFullyAuthenticated()" class="alert alert-success">
+                ✅ You are fully authenticated via Username/Password
+            </div>
+        </div>
+
+        <!-- Access Matrix -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📋</div>
+                <h3 class="card-title">Your Access Permissions</h3>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🏠</div>
+                    <h3>Public Pages</h3>
+                    <p>Home, About, Contact</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👤</div>
+                    <h3>User Dashboard</h3>
+                    <p sec:authorize="hasRole('USER')">✅ Accessible</p>
+                    <p sec:authorize="!hasRole('USER')">❌ Not Available</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚙️</div>
+                    <h3>Admin Panel</h3>
+                    <p sec:authorize="hasRole('ADMIN')">✅ Accessible</p>
+                    <p sec:authorize="!hasRole('ADMIN')">❌ Admin Only</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🗑️</div>
+                    <h3>Delete Actions</h3>
+                    <p sec:authorize="hasRole('ADMIN')">✅ Permitted</p>
+                    <p sec:authorize="!hasRole('ADMIN')">❌ Admin Only</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🧭</div>
+                <h3 class="card-title">Navigation</h3>
+            </div>
+            <div class="nav-pills">
+                <a class="nav-pill" th:href="@{/}">🏠 Home</a>
+                <a class="nav-pill" th:href="@{/user}">👤 User Dashboard</a>
+                <a class="nav-pill" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">⚙️ Admin Panel</a>
+                <a class="nav-pill" th:href="@{/logout}">🚪 Logout</a>
             </div>
         </div>
     </div>
-</div>
-
-<footer>
-    <div class="container">
-        <p>
-            &copy; Arcturus
-            <span sec:authorize="isAuthenticated()" style="display: inline-block;">
-                | Logged user: <span sec:authentication="name"></span>
-                | Roles: <span sec:authentication="principal.authorities"></span>
-                | <a th:href="@{/logout}">Sign Out</a>
-            </span>
-        </p>
-    </div>
-</footer>
 
 </body>
+
 </html>

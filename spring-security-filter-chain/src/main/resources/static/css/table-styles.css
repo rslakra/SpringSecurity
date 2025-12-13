@@ -1,0 +1,142 @@
+/* ============================================
+   Table Styles
+   ============================================ */
+
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+}
+
+.table th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+}
+
+.table th:first-child {
+    border-top-left-radius: var(--radius-lg);
+}
+
+.table th:last-child {
+    border-top-right-radius: var(--radius-lg);
+}
+
+.table td {
+    padding: 1rem 1.25rem;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--radius-lg);
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--radius-lg);
+}
+
+/* Table Striped */
+.table-striped tbody tr:nth-child(even) {
+    background: var(--gray-50);
+}
+
+.table-striped tbody tr:nth-child(even):hover {
+    background: var(--gray-100);
+}
+
+/* Table Bordered */
+.table-bordered td,
+.table-bordered th {
+    border: 1px solid var(--gray-200);
+}
+
+/* Table Compact */
+.table-compact th,
+.table-compact td {
+    padding: 0.75rem 1rem;
+}
+
+/* Table Actions Column */
+.table .actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.table .actions .btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+/* Status Badges in Tables */
+.table .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.table .badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.table .badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.table .badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.table .badge-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+}

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
@@ -17,6 +18,28 @@ public class ResourceController {
     @GetMapping("/login")
     public String loginEndpoint() {
         return "views/login";
+    }
+
+    @GetMapping("/register")
+    public String registerEndpoint() {
+        return "views/register";
+    }
+
+    @PostMapping("/register")
+    public String registerSubmit() {
+        // Demo: Just redirect to login with success message
+        return "redirect:/login?registered=true";
+    }
+
+    @GetMapping("/registration")
+    public String registrationEndpoint() {
+        return "views/registration";
+    }
+
+    @PostMapping("/registration")
+    public String registrationSubmit() {
+        // Demo: Just redirect with success
+        return "redirect:/registration?success=true";
     }
 
     @GetMapping("/admin")

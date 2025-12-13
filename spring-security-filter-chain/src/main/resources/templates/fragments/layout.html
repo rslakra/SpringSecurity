@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Title -->
+    <title layout:title-pattern="$CONTENT_TITLE - Spring Security">Spring Security Filter Chain</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}" />
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">SecurityChain</a>
+
+            <ul class="nav-links">
+                <!-- Public Links -->
+                <li>
+                    <a th:href="@{/}">
+                        <span class="nav-icon">🏠</span> Home
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/about-us}">
+                        <span class="nav-icon">ℹ️</span> About
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/contact-us}">
+                        <span class="nav-icon">✉️</span> Contact
+                    </a>
+                </li>
+
+                <!-- Authenticated Links -->
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/user}">
+                        <span class="nav-icon">👤</span> Dashboard
+                    </a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}">
+                        <span class="nav-icon">⚙️</span> Admin
+                    </a>
+                </li>
+
+                <!-- Login/Logout -->
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn-outline">
+                        <span class="nav-icon">🔐</span> Login
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">
+                        <span class="nav-icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <section layout:fragment="pageContent">
+            <!-- Page Content -->
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/about-us}">About</a>
+                <a th:href="@{/contact-us}">Contact</a>
+                <a href="https://spring.io/projects/spring-security" target="_blank">Spring Security Docs</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="footer-auth">
+                <span>👤</span>
+                <span sec:authentication="name">User</span>
+                <span class="role-badge" sec:authentication="principal.authorities">[ROLE]</span>
+            </div>
+
+            <div class="text-muted" sec:authorize="!isAuthenticated()">
+                &copy; 2025 Spring Security Filter Chain Demo
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Optional Section -->
+    <th:block layout:fragment="optional" />
+</body>
+
+</html>

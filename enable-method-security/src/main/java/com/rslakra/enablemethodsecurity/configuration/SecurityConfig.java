@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
@@ -28,33 +29,41 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     /**
-     * @param httpSecurity
-     * @param userDetailsService
-     * @param passwordEncoder
-     * @return
-     * @throws Exception
+     * @return PasswordEncoder
      */
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity, UserDetailsService userDetailsService,
-                                                       BCryptPasswordEncoder passwordEncoder) throws Exception {
-        AuthenticationManagerBuilder
-            authManagerBuilder =
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * @param httpSecurity HttpSecurity
+     * @param userDetailsService UserDetailsService
+     * @param passwordEncoder PasswordEncoder
+     * @return AuthenticationManager
+     * @throws Exception if error occurs
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity,
+                                                        UserDetailsService userDetailsService,
+                                                        PasswordEncoder passwordEncoder) throws Exception {
+        AuthenticationManagerBuilder authManagerBuilder =
             httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
         authManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return authManagerBuilder.build();
     }
 
     /**
-     * @param passwordEncoder
-     * @return
+     * @param passwordEncoder PasswordEncoder
+     * @return UserDetailsService
      */
     @Bean
-    public UserDetailsService userDetailsService(BCryptPasswordEncoder passwordEncoder) {
-        return new UserDetailsServiceImpl(passwordEncoder);
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        return new UserDetailsServiceImpl((BCryptPasswordEncoder) passwordEncoder);
     }
 
     /**
-     * @return
+     * @return AuthorizationManager
      */
     @Bean
     public AuthorizationManager<MethodInvocation> authorizationManager() {
@@ -62,8 +71,8 @@ public class SecurityConfig {
     }
 
     /**
-     * @param authorizationManager
-     * @return
+     * @param authorizationManager AuthorizationManager
+     * @return Advisor
      */
     @Bean
     @Role(ROLE_INFRASTRUCTURE)
@@ -75,29 +84,26 @@ public class SecurityConfig {
     }
 
     /**
-     * @param http
-     * @return
-     * @throws Exception
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception if error occurs
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-            .disable()
-            .authorizeRequests()
-            .anyRequest()
-            .authenticated()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+            // Disable CSRF for stateless API
+            .csrf(csrf -> csrf.disable())
+            // Configure authorization
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()
+            )
+            // Use stateless session management
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            // Enable HTTP Basic authentication
+            .httpBasic(httpBasic -> {});
 
         return http.build();
-    }
-
-    /**
-     * @return
-     */
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

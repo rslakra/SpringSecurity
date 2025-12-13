@@ -2,14 +2,18 @@ package com.rslakra.securityfilterchain;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+/**
+ * Spring Security Filter Chain Application.
+ * Demonstrates SecurityFilterChain configuration with Spring Security 6.x.
+ */
 @SpringBootApplication
-@EnableWebMvc
 public class SecurityFilterChainApplication {
 
     /**
-     * @param args
+     * Main entry point.
+     *
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         SpringApplication.run(SecurityFilterChainApplication.class, args);

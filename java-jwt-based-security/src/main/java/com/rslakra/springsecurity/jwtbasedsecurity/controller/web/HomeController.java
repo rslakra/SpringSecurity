@@ -3,11 +3,10 @@ package com.rslakra.springsecurity.jwtbasedsecurity.controller.web;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import com.rslakra.springsecurity.jwtbasedsecurity.utils.JWTUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class HomeController {
@@ -17,5 +16,4 @@ public class HomeController {
         model.addAttribute("requestUrl", JWTUtils.getRequestUrl(servletRequest));
         return "index";
     }
-
 }

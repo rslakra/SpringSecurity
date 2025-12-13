@@ -1,7 +1,6 @@
 package com.rslakra.springsecurity.jwtbasedsecurity.config;
 
 import com.rslakra.springsecurity.jwtbasedsecurity.service.SecretsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +12,8 @@ public class CSRFConfig {
     private final SecretsService secretsService;
 
     /**
-     * @param secretsService
+     * @param secretsService the secrets service
      */
-    @Autowired
     public CSRFConfig(SecretsService secretsService) {
         this.secretsService = secretsService;
     }
@@ -23,6 +21,6 @@ public class CSRFConfig {
     @Bean
     @ConditionalOnMissingBean
     public CsrfTokenRepository jwtCsrfTokenRepository() {
-        return new JWTCsrfTokenRepository(secretsService.getHS256SecretBytes());
+        return new JWTCsrfTokenRepository(secretsService.getHS256SecretKey());
     }
 }

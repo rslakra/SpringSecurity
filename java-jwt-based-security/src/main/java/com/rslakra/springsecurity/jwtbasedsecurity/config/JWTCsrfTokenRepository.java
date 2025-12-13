@@ -1,19 +1,18 @@
 package com.rslakra.springsecurity.jwtbasedsecurity.config;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 public class JWTCsrfTokenRepository implements CsrfTokenRepository {
 
@@ -21,18 +20,18 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
     private static final String DEFAULT_CSRF_TOKEN_ATTR_NAME = CSRFConfig.class.getName()
         .concat(".CSRF_TOKEN");
 
-    private byte[] secret;
+    private final SecretKey secretKey;
 
     /**
-     * @param secret
+     * @param secretKey the secret key for signing
      */
-    public JWTCsrfTokenRepository(byte[] secret) {
-        this.secret = secret;
+    public JWTCsrfTokenRepository(SecretKey secretKey) {
+        this.secretKey = secretKey;
     }
 
     /**
-     * @param request
-     * @return
+     * @param request the HTTP request
+     * @return the generated CSRF token
      */
     @Override
     public CsrfToken generateToken(HttpServletRequest request) {
@@ -44,20 +43,20 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
         Date exp = new Date(System.currentTimeMillis() + (1000 * 30)); // 30 seconds
 
         String token = Jwts.builder()
-            .setId(id)
-            .setIssuedAt(now)
-            .setNotBefore(now)
-            .setExpiration(exp)
-            .signWith(SignatureAlgorithm.HS256, secret)
+            .id(id)
+            .issuedAt(now)
+            .notBefore(now)
+            .expiration(exp)
+            .signWith(secretKey)
             .compact();
 
         return new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", token);
     }
 
     /**
-     * @param token
-     * @param request
-     * @param response
+     * @param token    the CSRF token
+     * @param request  the HTTP request
+     * @param response the HTTP response
      */
     @Override
     public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
@@ -73,8 +72,8 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
     }
 
     /**
-     * @param request
-     * @return
+     * @param request the HTTP request
+     * @return the loaded CSRF token
      */
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {

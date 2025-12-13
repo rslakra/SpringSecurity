@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- root - WARN for tests to reduce noise -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- rslakra -->
+    <logger name="com.rslakra" level="INFO"/>
+
+    <!-- springframework -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.boot.test" level="INFO"/>
+    <logger name="org.springframework.security" level="WARN"/>
+
+    <!-- hibernate -->
+    <logger name="org.hibernate" level="WARN"/>
+
+    <!-- nimbusds -->
+    <logger name="com.nimbusds" level="WARN"/>
+
+</configuration>
+

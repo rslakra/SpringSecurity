@@ -1,26 +1,49 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
+
 <head>
     <title>Contact Us</title>
 </head>
+
 <body>
 
-<div layout:fragment="dContents">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Contact Us</h1>
-            <a class="btn text-right" th:href="@{/index}">Home</a>
-            <p>Please send us an email at rslakra.work@gmail.com.</p>
+    <div layout:fragment="pageContent">
+        <div class="page-header">
+            <h1>✉️ Contact Us</h1>
+            <p class="subtitle">Get in touch with us</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📧</div>
+                <h3 class="card-title">Send us a message</h3>
+            </div>
+
+            <p>
+                Have questions or feedback? We'd love to hear from you!
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📧</div>
+                    <h3>Email</h3>
+                    <p><a href="mailto:work.lakra@gmail.com">work.lakra@gmail.com</a></p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💼</div>
+                    <h3>GitHub</h3>
+                    <p><a href="https://github.com/rslakra" target="_blank">github.com/rslakra</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-pills">
+            <a class="nav-pill" th:href="@{/}">🏠 Back to Home</a>
+            <a class="nav-pill" th:href="@{/about-us}">ℹ️ About Us</a>
         </div>
     </div>
-</div>
-
-<th:block th:fragment="optional">
-    <!-- optional items here. -->
-</th:block>
 
 </body>
+
 </html>

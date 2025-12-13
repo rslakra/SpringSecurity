@@ -3,7 +3,7 @@ package com.rslakra.springsecurity.jwtbasedsecurity.controller;
 import com.rslakra.springsecurity.jwtbasedsecurity.model.JwtResponse;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class BaseController {
 
     /**
-     * @param ex
-     * @return
+     * @param ex the exception
+     * @return JwtResponse with error details
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({SignatureException.class, MalformedJwtException.class, JwtException.class})
