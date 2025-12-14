@@ -1,10 +1,9 @@
 package com.rslakra.jwtauthentication4.security.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtTokenProvider {
@@ -34,12 +34,20 @@ public class JwtTokenProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    private String secretKey;
+    private SecretKey secretKey;
 
     @PostConstruct
     protected void init() {
         logger.debug("init()");
-        secretKey = Base64.getEncoder().encodeToString(jwtProperties.getSecretKey().getBytes());
+        // For HS256, we need at least 256 bits (32 bytes)
+        String secret = jwtProperties.getSecretKey();
+        // Ensure minimum length for HS256 (32 bytes = 256 bits)
+        // If shorter, repeat the string to reach minimum length
+        if (secret.length() < 32) {
+            int repeatCount = (32 / secret.length()) + 1;
+            secret = secret.repeat(repeatCount).substring(0, 32);
+        }
+        secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     /**
@@ -49,15 +57,14 @@ public class JwtTokenProvider {
      */
     public String createToken(String username, List<String> roles) {
         logger.debug("createToken({}, {})", username, roles);
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtProperties.getValidityInMillis());
         return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .subject(username)
+            .claim("roles", roles)
+            .issuedAt(now)
+            .expiration(validity)
+            .signWith(secretKey)
             .compact();
     }
 
@@ -77,7 +84,12 @@ public class JwtTokenProvider {
      */
     public String getUsername(final String token) {
         logger.debug("getUsername({})", token);
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getSubject();
     }
 
     /**
@@ -101,8 +113,12 @@ public class JwtTokenProvider {
     public boolean hasValidToken(final String token) {
         logger.debug("+hasValidToken({})", token);
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            if (claims.getBody().getExpiration().before(new Date())) {
+            Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+            if (claims.getExpiration().before(new Date())) {
                 logger.debug("-hasValidToken(), result:false");
                 return false;
             }

@@ -20,22 +20,21 @@ import com.rslakra.jwtauthentication4.domain.Vehicle;
 import com.rslakra.jwtauthentication4.repository.VehicleRepository;
 import com.rslakra.jwtauthentication4.web.VehicleController;
 import com.rslakra.jwtauthentication4.web.VehicleForm;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-@WebMvcTest(controllers = VehicleController.class, secure = false)
-@RunWith(SpringRunner.class)
-public class VehicleControllerTest {
+@WebMvcTest(controllers = VehicleController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class VehicleControllerTest {
 
     @MockBean
     VehicleRepository vehicles;
@@ -46,8 +45,8 @@ public class VehicleControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         given(this.vehicles.findById(1L))
             .willReturn(Optional.of(Vehicle.builder().name("test").build()));
 
@@ -69,7 +68,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testFindByBrandIn() throws Exception {
+    void testFindByBrandIn() throws Exception {
 
         this.mockMvc
             .perform(
@@ -84,7 +83,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    void testGetById() throws Exception {
 
         this.mockMvc
             .perform(
@@ -99,7 +98,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testGetByIdNotFound() throws Exception {
+    void testGetByIdNotFound() throws Exception {
 
         this.mockMvc
             .perform(
@@ -113,7 +112,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
 
         this.mockMvc
             .perform(
@@ -128,7 +127,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
 
         this.mockMvc
             .perform(
@@ -144,7 +143,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
 
         this.mockMvc
             .perform(

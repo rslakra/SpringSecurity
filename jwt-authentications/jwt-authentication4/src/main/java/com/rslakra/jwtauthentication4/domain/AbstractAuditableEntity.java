@@ -11,10 +11,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
 
 @Getter
 @Setter
@@ -31,11 +31,11 @@ public abstract class AbstractAuditableEntity<U, ID extends Serializable> extend
 
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "created_by", nullable = true)
     U createdBy;
 
     @LastModifiedBy
     @ManyToOne
-    @JoinColumn(name = "last_modified_by")
+    @JoinColumn(name = "last_modified_by", nullable = true)
     U lastModifiedBy;
 }

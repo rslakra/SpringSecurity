@@ -1,22 +1,22 @@
 package com.rslakra.jwtauthentication4;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.rslakra.jwtauthentication4.domain.Vehicle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class VehicleTest {
+class VehicleTest {
 
     @Test
-    public void testVehicle() {
+    void testVehicle() {
         Vehicle v = Vehicle.builder().name("test").build();
         v.setId(1L);
-        assertTrue("id is 1L", 1L == v.getId());
-        assertTrue("name is test", "test".equals(v.getName()));
+        assertEquals(1L, v.getId(), "id should be 1L");
+        assertEquals("test", v.getName(), "name should be test");
 
         Vehicle v2 = Vehicle.builder().name("test2").build();
         v2.setId(2L);
-        assertTrue("id is 2L", 2L == v2.getId());
-        assertTrue("name is test2", "test2".equals(v2.getName()));
+        assertEquals(2L, v2.getId(), "id should be 2L");
+        assertEquals("test2", v2.getName(), "name should be test2");
     }
 }

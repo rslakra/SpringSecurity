@@ -38,4 +38,15 @@ public class RestExceptionHandler {
         LOGGER.debug("handling InvalidJwtAuthenticationException...");
         return status(UNAUTHORIZED).build();
     }
+
+    /**
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity handleGenericException(Exception ex, WebRequest request) {
+        LOGGER.error("Unhandled exception: ", ex);
+        return status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }

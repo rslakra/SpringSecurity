@@ -8,20 +8,17 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rslakra.jwtauthentication4.web.VehicleForm;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class JwtAuthentication4ApplicationTests {
+class JwtAuthentication4ApplicationTests {
 
     private MockMvc mockMvc;
 
@@ -31,15 +28,15 @@ public class JwtAuthentication4ApplicationTests {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         this.mockMvc = webAppContextSetup(this.applicationContext)
             .apply(springSecurity())
             .build();
     }
 
     @Test
-    public void getAllVehicles() throws Exception {
+    void getAllVehicles() throws Exception {
         this.mockMvc
             .perform(
                 get("/v1/vehicles")
@@ -49,7 +46,7 @@ public class JwtAuthentication4ApplicationTests {
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
 
         this.mockMvc
             .perform(
@@ -63,7 +60,7 @@ public class JwtAuthentication4ApplicationTests {
 
     @Test
     @WithUserDetails()
-    public void testSaveWithMock() throws Exception {
+    void testSaveWithMock() throws Exception {
 
         this.mockMvc
             .perform(

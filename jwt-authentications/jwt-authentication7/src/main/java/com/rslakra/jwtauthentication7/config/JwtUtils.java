@@ -2,11 +2,12 @@ package com.rslakra.jwtauthentication7.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +28,19 @@ public class JwtUtils implements Serializable {
     @Value("${app.jwtExpirationInMillis}")
     private Long jwtExpirationInMillis;
 
+    private SecretKey secretKey;
+
+    @jakarta.annotation.PostConstruct
+    protected void init() {
+        // For HS512, we need at least 512 bits (64 bytes)
+        String secretStr = secret;
+        if (secretStr.length() < 64) {
+            int repeatCount = (64 / secretStr.length()) + 1;
+            secretStr = secretStr.repeat(repeatCount).substring(0, 64);
+        }
+        secretKey = Keys.hmacShaKeyFor(secretStr.getBytes());
+    }
+
     /**
      * Generates the JWT token.
      * <p>
@@ -43,9 +57,15 @@ public class JwtUtils implements Serializable {
      * @return
      */
     public String generateToken(final Map<String, Object> claims, final String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-            .signWith(SignatureAlgorithm.HS512, secret).compact();
+        Date now = new Date(System.currentTimeMillis());
+        Date expiry = new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000);
+        return Jwts.builder()
+            .claims(claims)
+            .subject(subject)
+            .issuedAt(now)
+            .expiration(expiry)
+            .signWith(secretKey)
+            .compact();
     }
 
     //generate token for user
@@ -63,7 +83,11 @@ public class JwtUtils implements Serializable {
      * @return
      */
     public Claims extractAllClaimsFromToken(final String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
     }
 
     /**
