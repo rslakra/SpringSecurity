@@ -1,0 +1,46 @@
+name: SpringSecurity - JwtAuthentications CI
+
+env:
+  JAVA_VERSION: "21"
+  DISTRIBUTION: "temurin"
+
+on:
+  push:
+    paths:
+      - "jwt-authentications/**"
+      - ".github/workflows/spring-security-jwt-authentications-ci.yml"
+  pull_request:
+    paths:
+      - "jwt-authentications/**"
+      - ".github/workflows/spring-security-jwt-authentications-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - jwt-authentications/jwt-authentication1
+          - jwt-authentications/jwt-authentication3
+          - jwt-authentications/jwt-authentication4
+          - jwt-authentications/jwt-authentication5
+          - jwt-authentications/jwt-authentication6
+          - jwt-authentications/jwt-authentication7
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+          cache-dependency-path: ${{ matrix.module }}/pom.xml
+
+      - name: Build and run unit tests
+        working-directory: ${{ matrix.module }}
+        run: mvn -B -ntp test
