@@ -15,7 +15,10 @@
     <!-- Project -->
     <groupId>com.rslakra.spring-security</groupId>
     <artifactId>jwt-authentication7</artifactId>
-    <version>${revision}</version>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+    <name>jwt-authentication7</name>
+    <description>Spring Boot - JWT Security Authentication</description>    
 
     <!-- properties -->
     <properties>

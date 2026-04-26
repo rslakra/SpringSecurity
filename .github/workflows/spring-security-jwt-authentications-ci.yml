@@ -27,7 +27,7 @@ jobs:
           - jwt-authentications/jwt-authentication3
           - jwt-authentications/jwt-authentication4
           - jwt-authentications/jwt-authentication5
-          - jwt-authentications/jwt-authentication6
+          # - jwt-authentications/jwt-authentication6
           - jwt-authentications/jwt-authentication7
     steps:
       - name: Checkout

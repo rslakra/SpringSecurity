@@ -11,6 +11,8 @@
         <!-- lookup parent from a repository -->
         <relativePath/>
     </parent>
+
+    <!-- Project -->    
     <groupId>com.rslakra.spring-security</groupId>
     <artifactId>jwt-authentication3</artifactId>
     <version>0.0.1</version>
